@@ -8,7 +8,7 @@ import argparse
 from helpers import *
 from model import *
 
-def generate(char_rnn, device, prime_str='A', predict_len=100, temperature=0.8):
+def generate(char_rnn, device, prime_str='\n', predict_len=500, temperature=0.8):
 
     hidden = char_rnn.init_hidden(1)
     prime_input = Variable(char_tensor(prime_str).unsqueeze(0))
