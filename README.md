@@ -39,7 +39,7 @@ Run `train.py` with the dataset filename to train and save the network:
 > python train.py shakespeare.txt
 
 Training for 2000 epochs...
-(... 10 minutes later ...)
+(... ~30 minutes later ...)
 Saved as shakespeare.pt
 ```
 After training the model will be saved as `[filename].pt`.

@@ -21,7 +21,7 @@ argparser.add_argument('--model', type=str, default="model/model.pt")
 argparser.add_argument('--model_type', type=str, default="gru") # gru, lstm
 argparser.add_argument('--n_epochs', type=int, default=2000)
 argparser.add_argument('--print_every', type=int, default=100)
-argparser.add_argument('--hidden_size', type=int, default=512)
+argparser.add_argument('--hidden_size', type=int, default=256)
 argparser.add_argument('--n_layers', type=int, default=2)
 argparser.add_argument('--learning_rate', type=float, default=0.01)
 argparser.add_argument('--chunk_len', type=int, default=200)
