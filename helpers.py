@@ -13,9 +13,14 @@ all_characters = string.printable + extra_characters
 n_characters = len(all_characters)
 
 def read_file(filename):
+    t = time.time()
     contents = ""
     with open(filename, encoding="utf-8") as f:
-        for c in f.read():
+        file_data = f.read()
+        for i, c in enumerate(file_data):
+            if time.time() - t > 3:
+                print(f"Parsing '{filename}' {100 * i / len(file_data):.1f}%.")
+                t = time.time()
             if c in all_characters:
                 contents += c
             else:

@@ -34,7 +34,7 @@ def process_corpus(args, corpus, num_all_poems, append = False):
             filtered_corpus_text += get_poem(item, include_poem_name=args.with_poem_names)
     print(f"Found {num_all_poems + num_filtered_poems} poems{extra_info}.")
     
-    if len(filtered_corpus_text):
+    if len(filtered_corpus_text) or not append:
         # Write
         w = "Appending" if append else "Writing"
         print(f"{w} filtered output to {args.output}.")
