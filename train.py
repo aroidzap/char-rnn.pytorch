@@ -6,6 +6,7 @@ import torch.nn as nn
 from torch.autograd import Variable
 import argparse
 import os
+import random
 
 from tqdm import tqdm
 
@@ -15,12 +16,12 @@ from generate import *
 
 # Parse command line arguments
 argparser = argparse.ArgumentParser()
-argparser.add_argument('--dataset', type=str, default="data/shakespeare.txt")
-argparser.add_argument('--model', type=str, default="model/shakespeare.pt")
+argparser.add_argument('--dataset', type=str, default="data/export.txt")
+argparser.add_argument('--model', type=str, default="model/model.pt")
 argparser.add_argument('--model_type', type=str, default="gru") # gru, lstm
 argparser.add_argument('--n_epochs', type=int, default=2000)
 argparser.add_argument('--print_every', type=int, default=100)
-argparser.add_argument('--hidden_size', type=int, default=100)
+argparser.add_argument('--hidden_size', type=int, default=512)
 argparser.add_argument('--n_layers', type=int, default=2)
 argparser.add_argument('--learning_rate', type=float, default=0.01)
 argparser.add_argument('--chunk_len', type=int, default=200)
@@ -37,7 +38,7 @@ def random_training_set(chunk_len, batch_size):
     inp = torch.LongTensor(batch_size, chunk_len)
     target = torch.LongTensor(batch_size, chunk_len)
     for bi in range(batch_size):
-        start_index = random.randint(0, file_len - chunk_len)
+        start_index = max(0, random.randint(0, file_len - chunk_len - 1))
         end_index = start_index + chunk_len + 1
         chunk = file[start_index:end_index]
         inp[bi] = char_tensor(chunk[:-1])

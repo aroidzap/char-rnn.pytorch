@@ -2,19 +2,25 @@
 
 import unidecode
 import string
-import random
 import time
 import math
 import torch
 
 # Reading and un-unicode-encoding data
 
-all_characters = string.printable
+extra_characters = "äüŤćöĎ”ŇŮÚ‘ÝÉĚŘÁÍŠóÓŽČ’úďň“„ť–ůčéýřšžěáí"
+all_characters = string.printable + extra_characters
 n_characters = len(all_characters)
 
 def read_file(filename):
-    file = unidecode.unidecode(open(filename).read())
-    return file, len(file)
+    contents = ""
+    with open(filename, encoding="utf-8") as f:
+        for c in f.read():
+            if c in all_characters:
+                contents += c
+            else:
+                contents += unidecode.unidecode(c)
+    return contents, len(contents)
 
 # Turning a string into a tensor
 

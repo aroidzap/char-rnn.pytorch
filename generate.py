@@ -43,18 +43,16 @@ if __name__ == '__main__':
 
     # Parse command line arguments
     argparser = argparse.ArgumentParser()
-    argparser.add_argument('-m', '--model', type=str, default="model/shakespeare.pt")
-    argparser.add_argument('-p', '--prime_str', type=str, default='A')
-    argparser.add_argument('-l', '--predict_len', type=int, default=100)
+    argparser.add_argument('-m', '--model', type=str, default="model/model.pt")
+    argparser.add_argument('-p', '--prime_str', type=str, default='\n')
+    argparser.add_argument('-l', '--predict_len', type=int, default=500)
     argparser.add_argument('-t', '--temperature', type=float, default=0.8)
     argparser.add_argument('--device', type=str, default=None) # cpu, cuda, mps
     args = argparser.parse_args()
 
     device = set_torch_device(args.device)
-    state_dict = torch.load(args.model, weights_only=True)
 
-    char_rnn = CharRNN.load(args.model)
-    char_rnn.to(device)
+    char_rnn = CharRNN.load(args.model, device)
 
     output = generate(char_rnn, device, args.prime_str, args.predict_len, temperature=args.temperature)
 

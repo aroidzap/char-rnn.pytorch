@@ -31,8 +31,8 @@ class CharRNN(nn.Module):
         }, model_filename)
 
     @staticmethod
-    def load(model_filename):
-        data = torch.load(model_filename, weights_only=True)
+    def load(model_filename, device):
+        data = torch.load(model_filename, weights_only=True, map_location=device)
         char_rnn = CharRNN(
             data["input_size"], 
             data["hidden_size"], 
@@ -41,6 +41,7 @@ class CharRNN(nn.Module):
             data["n_layers"]
         )
         char_rnn.load_state_dict(data["state_dict"])
+        char_rnn.to(device)
         return char_rnn
 
     def forward(self, input, hidden):

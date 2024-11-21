@@ -1,5 +1,11 @@
 # TLDR
-Install latest [miniconda](https://www.anaconda.com/download/success#miniconda).
+Install latest [git](https://git-scm.com/downloads) and latest [miniconda](https://www.anaconda.com/download/success#miniconda).
+
+Clone repo:
+```
+git clone https://github.com/aroidzap/char-rnn.pytorch.git --recurse-submodules
+cd char-rnn.pytorch
+```
 
 Create environment:
 ```
@@ -7,12 +13,16 @@ conda create -n char-rnn python==3.12 --yes
 conda activate char-rnn
 ```
 
-Run:
+Install requirements:
 ```
 pip install -r requirements.txt
-python download.py
+```
+
+Run:
+```
+python corpus_export.py --p_author_identity "Erben, Karel Jaromír" --with_poem_names
 python train.py
-python generate.py -p "The Romeo and"
+python generate.py -p "Kytice a kolovrat."
 ```
 
 # char-rnn.pytorch
