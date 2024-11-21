@@ -15,8 +15,9 @@ from generate import *
 
 # Parse command line arguments
 argparser = argparse.ArgumentParser()
-argparser.add_argument('filename', type=str)
-argparser.add_argument('--model', type=str, default="gru")
+argparser.add_argument('--dataset', type=str, default="data/shakespeare.txt")
+argparser.add_argument('--model', type=str, default="model/shakespeare.pt")
+argparser.add_argument('--model_type', type=str, default="gru") # gru, lstm
 argparser.add_argument('--n_epochs', type=int, default=2000)
 argparser.add_argument('--print_every', type=int, default=100)
 argparser.add_argument('--hidden_size', type=int, default=100)
@@ -25,13 +26,12 @@ argparser.add_argument('--learning_rate', type=float, default=0.01)
 argparser.add_argument('--chunk_len', type=int, default=200)
 argparser.add_argument('--batch_size', type=int, default=100)
 argparser.add_argument('--shuffle', action='store_true')
-argparser.add_argument('--cuda', action='store_true')
+argparser.add_argument('--device', type=str, default=None) # cpu, cuda, mps
 args = argparser.parse_args()
 
-if args.cuda:
-    print("Using CUDA")
+device = set_torch_device(args.device, verbose=True)
 
-file, file_len = read_file(args.filename)
+file, file_len = read_file(args.dataset)
 
 def random_training_set(chunk_len, batch_size):
     inp = torch.LongTensor(batch_size, chunk_len)
@@ -44,60 +44,58 @@ def random_training_set(chunk_len, batch_size):
         target[bi] = char_tensor(chunk[1:])
     inp = Variable(inp)
     target = Variable(target)
-    if args.cuda:
-        inp = inp.cuda()
-        target = target.cuda()
+    inp = inp.to(device)
+    target = target.to(device)
     return inp, target
 
 def train(inp, target):
-    hidden = decoder.init_hidden(args.batch_size)
-    if args.cuda:
-        hidden = hidden.cuda()
-    decoder.zero_grad()
+    hidden = char_rnn.init_hidden(args.batch_size)
+    hidden = hidden.to(device)
+    char_rnn.zero_grad()
     loss = 0
 
     for c in range(args.chunk_len):
-        output, hidden = decoder(inp[:,c], hidden)
+        output, hidden = char_rnn(inp[:,c], hidden)
         loss += criterion(output.view(args.batch_size, -1), target[:,c])
 
     loss.backward()
-    decoder_optimizer.step()
+    char_rnn_optimizer.step()
 
-    return loss.data[0] / args.chunk_len
+    return loss.item() / args.chunk_len
 
 def save():
-    save_filename = os.path.splitext(os.path.basename(args.filename))[0] + '.pt'
-    torch.save(decoder, save_filename)
-    print('Saved as %s' % save_filename)
+    if not os.path.exists(os.path.dirname(args.model)):
+        os.makedirs(os.path.dirname(args.model))
+    char_rnn.save(args.model)
+    print(f"Saved as {args.model}")
 
 # Initialize models and start training
 
-decoder = CharRNN(
+char_rnn = CharRNN(
     n_characters,
     args.hidden_size,
     n_characters,
-    model=args.model,
+    model_type=args.model_type,
     n_layers=args.n_layers,
 )
-decoder_optimizer = torch.optim.Adam(decoder.parameters(), lr=args.learning_rate)
+char_rnn_optimizer = torch.optim.Adam(char_rnn.parameters(), lr=args.learning_rate)
 criterion = nn.CrossEntropyLoss()
 
-if args.cuda:
-    decoder.cuda()
+char_rnn.to(device)
 
 start = time.time()
 all_losses = []
 loss_avg = 0
 
 try:
-    print("Training for %d epochs..." % args.n_epochs)
+    print(f"Training for {args.n_epochs} epochs...")
     for epoch in tqdm(range(1, args.n_epochs + 1)):
         loss = train(*random_training_set(args.chunk_len, args.batch_size))
         loss_avg += loss
 
         if epoch % args.print_every == 0:
-            print('[%s (%d %d%%) %.4f]' % (time_since(start), epoch, epoch / args.n_epochs * 100, loss))
-            print(generate(decoder, 'Wh', 100, cuda=args.cuda), '\n')
+            print(f"[{time_since(start)} ({epoch} {epoch / args.n_epochs * 100:.1f}%) {loss:.4f}]")
+            print(generate(char_rnn, device), '\n')
 
     print("Saving...")
     save()

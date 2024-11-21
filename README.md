@@ -1,3 +1,20 @@
+# TLDR
+Install latest [miniconda](https://www.anaconda.com/download/success#miniconda).
+
+Create environment:
+```
+conda create -n char-rnn python==3.12 --yes
+conda activate char-rnn
+```
+
+Run:
+```
+pip install -r requirements.txt
+python download.py
+python train.py
+python generate.py -p "The Romeo and"
+```
+
 # char-rnn.pytorch
 
 A PyTorch implementation of [char-rnn](https://github.com/karpathy/char-rnn) for character-level text generation. This is copied from [the Practical PyTorch series](https://github.com/spro/practical-pytorch/blob/master/char-rnn-generation/char-rnn-generation.ipynb).
@@ -23,7 +40,7 @@ After training the model will be saved as `[filename].pt`.
 Usage: train.py [filename] [options]
 
 Options:
---model            Whether to use LSTM or GRU units    gru
+--model_type       Whether to use LSTM or GRU units    gru
 --n_epochs         Number of epochs to train           2000
 --print_every      Log learning rate at this interval  100
 --hidden_size      Hidden size of GRU                  50
@@ -31,7 +48,6 @@ Options:
 --learning_rate    Learning rate                       0.01
 --chunk_len        Length of training chunks           200
 --batch_size       Number of examples per batch        100
---cuda             Use CUDA
 ```
 
 ## Generation
@@ -56,6 +72,5 @@ Options:
 -p, --prime_str      String to prime generation with
 -l, --predict_len    Length of prediction
 -t, --temperature    Temperature (higher is more chaotic)
---cuda               Use CUDA
 ```
 
