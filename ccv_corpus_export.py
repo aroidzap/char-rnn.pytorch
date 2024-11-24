@@ -54,20 +54,22 @@ if __name__ == '__main__':
 
     # Download corpusCzechVerse
 
-    ccv_path = f"{args.ccv_download_folder}/corpusCzechVerse-master/ccv"
+
+    ccv_path = f"{args.ccv_download_folder}/corpusCzechVerse/ccv"
     if not os.path.exists(ccv_path):
         
-        from io import BytesIO
-        from zipfile import ZipFile
-        import requests
-
-        ccv_url = "https://github.com/versotym/corpusCzechVerse/archive/refs/heads/master.zip"
-        print(f"Downloading {ccv_url}")
-        ccv_zip = ZipFile(BytesIO(requests.get(ccv_url).content))
-        print(f"Extracting to {args.ccv_download_folder}")
-        if not os.path.exists(args.ccv_download_folder):
-            os.makedirs(args.ccv_download_folder)
-        ccv_zip.extractall(args.ccv_download_folder)
+        from git import Repo, RemoteProgress
+        
+        ccv_repo_url = "https://github.com/versotym/corpusCzechVerse.git"
+        print(f"Downloading git repo {ccv_repo_url}")
+        class GitProgressPrinter(RemoteProgress):
+            def update(self, op_code, cur_count, max_count=None, message=""):
+                if op_code == 32:
+                    print(f"{100 * cur_count / max_count:.1f}% | {message or ''}")
+                else:
+                    print(f"{cur_count:i} / {max_count:i}")
+        Repo.clone_from(ccv_repo_url, f"{args.ccv_download_folder}/corpusCzechVerse", progress=GitProgressPrinter())
+        print(f"Done")
 
     # Load and process whole corpus
     num_all_poems = 0
