@@ -1,5 +1,6 @@
-import poetree
+import os
 import tqdm
+import poetree
 
 # see https://github.com/versotym/poetree
 
@@ -74,6 +75,8 @@ if __name__ == '__main__':
     if args.list_authors:
         list_authors(args)
     else:
+        if not os.path.exists(os.path.dirname(args.output)):
+            os.makedirs(os.path.dirname(args.output))
         with open(args.output, "w", encoding="utf-8") as out:
             for part in process_corpus(args):
                 out.write(part)
