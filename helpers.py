@@ -12,7 +12,11 @@ only_lower_characters = True
 extra_characters = "äüŤćöĎ”ŇŮÚ‘ÝÉĚŘÁÍŠóÓŽČ’úďň“„ť–ůčéýřšžěáí"
 ALL_CHARACTERS = string.printable + extra_characters
 if only_lower_characters:
-    ALL_CHARACTERS = ''.join(set(ALL_CHARACTERS.lower()))
+    unique_characters = ""
+    for c in ALL_CHARACTERS:
+        if c.lower() not in unique_characters:
+            unique_characters += c.lower()
+    ALL_CHARACTERS = unique_characters
 
 def process_character(c):
     if only_lower_characters:
