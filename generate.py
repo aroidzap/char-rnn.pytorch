@@ -31,7 +31,7 @@ def generate(char_rnn, device, prime_str='\n', predict_len=500, temperature=0.8)
         top_i = torch.multinomial(output_dist, 1)[0]
 
         # Add predicted character to string and use as next input
-        predicted_char = all_characters[top_i]
+        predicted_char = ALL_CHARACTERS[top_i]
         predicted += predicted_char
         inp = Variable(char_tensor(predicted_char).unsqueeze(0))
         inp = inp.to(device)

@@ -8,9 +8,23 @@ import torch
 
 # Reading and un-unicode-encoding data
 
+only_lower_characters = True
 extra_characters = "äüŤćöĎ”ŇŮÚ‘ÝÉĚŘÁÍŠóÓŽČ’úďň“„ť–ůčéýřšžěáí"
-all_characters = string.printable + extra_characters
-n_characters = len(all_characters)
+ALL_CHARACTERS = string.printable + extra_characters
+if only_lower_characters:
+    ALL_CHARACTERS = ''.join(set(ALL_CHARACTERS.lower()))
+
+def process_character(c):
+    if only_lower_characters:
+        if c.lower() in ALL_CHARACTERS:
+            return c.lower()
+        else:
+            return unidecode.unidecode(c).lower()
+    else:
+        if c in ALL_CHARACTERS:
+            return c
+        else:
+            return unidecode.unidecode(c)
 
 def read_file(filename):
     t = time.time()
@@ -21,10 +35,7 @@ def read_file(filename):
             if time.time() - t > 3:
                 print(f"Parsing '{filename}' {100 * i / len(file_data):.1f}%.")
                 t = time.time()
-            if c in all_characters:
-                contents += c
-            else:
-                contents += unidecode.unidecode(c)
+            contents += process_character(c)
     return contents, len(contents)
 
 # Turning a string into a tensor
@@ -33,7 +44,7 @@ def char_tensor(string):
     tensor = torch.zeros(len(string)).long()
     for c in range(len(string)):
         try:
-            tensor[c] = all_characters.index(string[c])
+            tensor[c] = ALL_CHARACTERS.index(string[c])
         except:
             continue
     return tensor

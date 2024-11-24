@@ -73,9 +73,9 @@ def save():
 # Initialize models and start training
 
 char_rnn = CharRNN(
-    n_characters,
+    len(ALL_CHARACTERS),
     args.hidden_size,
-    n_characters,
+    len(ALL_CHARACTERS),
     model_type=args.model_type,
     n_layers=args.n_layers,
 )
