@@ -16,7 +16,7 @@ def process_poem(args, poem):
             poem_text += "\n"
         paragraph_id = line['id_stanza']
 
-    if args.without_poem_names:
+    if args.without_poem_name:
         text = f"{poem_text}\n"
     else:
         text = f"{poem.title}\n{poem_text}\n"
@@ -46,7 +46,7 @@ def process_corpus(args):
 
                 text = process_poem(args, poem)
 
-                if args.with_author_names:
+                if args.with_author_name:
                     text = f"{author.name} ({author.born})\n\n" + text
                 yield text
 
