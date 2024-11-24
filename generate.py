@@ -10,6 +10,8 @@ from model import *
 
 def generate(char_rnn, device, prime_str='\n', predict_len=500, temperature=0.8):
 
+    prime_str = ''.join([process_character(c) for c in prime_str])
+
     hidden = char_rnn.init_hidden(1)
     prime_input = Variable(char_tensor(prime_str).unsqueeze(0))
 

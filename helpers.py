@@ -9,14 +9,20 @@ import torch
 # Reading and un-unicode-encoding data
 
 only_lower_characters = True
+
+def get_characters(characters):
+    if only_lower_characters:
+        lower_characters = ""
+        for c in characters:
+            if c.lower() not in lower_characters:
+                lower_characters += c.lower()
+        return lower_characters
+    else:
+        return characters
+
 extra_characters = "äüŤćöĎ”ŇŮÚ‘ÝÉĚŘÁÍŠóÓŽČ’úďň“„ť–ůčéýřšžěáí"
-ALL_CHARACTERS = string.printable + extra_characters
-if only_lower_characters:
-    unique_characters = ""
-    for c in ALL_CHARACTERS:
-        if c.lower() not in unique_characters:
-            unique_characters += c.lower()
-    ALL_CHARACTERS = unique_characters
+ALL_CHARACTERS = get_characters(string.printable + extra_characters)
+N_ALL_CHARACTERS = len(ALL_CHARACTERS)
 
 def process_character(c):
     if only_lower_characters:
