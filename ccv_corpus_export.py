@@ -67,7 +67,7 @@ if __name__ == '__main__':
                 if op_code == 32:
                     print(f"{100 * cur_count / max_count:.1f}% | {message or ''}")
                 else:
-                    print(f"{cur_count:i} / {max_count:i}")
+                    print(f"{int(cur_count)} / {int(max_count)}")
         Repo.clone_from(ccv_repo_url, f"{args.ccv_download_folder}/corpusCzechVerse", progress=GitProgressPrinter())
         print(f"Done")
 
